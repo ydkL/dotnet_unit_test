@@ -85,14 +85,3 @@ jobs:
     # Execute all unit tests in the solution
     - name: Execute unit tests
       run: dotnet test $env:Test_Project_Path --logger "trx;LogFileName=testResults.trx --results-directory "$env:Test_Dir/TestResults""
-
-    - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()    # run this step even if previous step failed
-        with:
-          name: NUnit Tests            # Name of the check run which will be created
-          path: $env:Test_Dir/TestResults/test-results.trx    # Path to test results
-          reporter: dotnet-trx        # Format of test results
-        
-
-  
