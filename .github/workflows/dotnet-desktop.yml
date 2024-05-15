@@ -58,7 +58,7 @@ jobs:
     env:
       Solution_Name: WeatherApi.csproj                         # Replace with your solution name, i.e. MyWpfApp.sln.
       Test_Project_Path: WeatherApi.Tests\WeatherApi.Tests.csproj               # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-
+      Test_Dir: WeatherApi.Tests
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -77,4 +77,23 @@ jobs:
 
     # Execute all unit tests in the solution
     - name: Execute unit tests
-      run: dotnet test $env:Test_Project_Path
+      run: dotnet test $env:Test_Project_Path --logger "trx;LogFileName=testResults.trx"
+
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v2
+      with:
+        name: Test Results
+        path: $env:Test_Dir/testResults
+
+    - name: Convert test result to JUnit XML
+      run: dotnet tool install --global dotnet-trx-to-junit
+    - run: dotnet trx2junit unitTest/testResults.trx --output $env:Test_Dir/testResults.xml
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v2
+      with:
+        name: Test Results
+        path: $env:Test_Dir/testResults.xml
+
+  
