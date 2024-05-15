@@ -84,4 +84,4 @@ jobs:
 
     # Execute all unit tests in the solution
     - name: Execute unit tests
-      run: dotnet test $env:Test_Project_Path --logger "trx;LogFileName=testResults.trx --results-directory "$env:Test_Dir/TestResults""
+      run: dotnet test $env:Test_Project_Path
