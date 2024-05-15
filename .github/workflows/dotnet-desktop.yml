@@ -47,7 +47,7 @@ on:
 jobs:
 
   build:
-
+    
     strategy:
       matrix:
         configuration: [Release]
@@ -63,7 +63,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
+        fetch-depth: 0- 
+    - name: Set Permissions
+      run: |
+        # Get the path to the directory
+        $dirPath = "$env:Test_Dir"
+    
+        # Set permissions for the directory and its contents recursively
+        icacls $dirPath /grant:r "Everyone:(OI)(CI)F" /T
 
     # Install the .NET Core workload
     - name: Install .NET Core
@@ -77,7 +84,7 @@ jobs:
 
     # Execute all unit tests in the solution
     - name: Execute unit tests
-      run: dotnet test $env:Test_Project_Path --logger "trx;LogFileName=testResults.trx"
+      run: dotnet test $env:Test_Project_Path --logger "trx;LogFileName=$env:Test_Dir/testResults.trx"
 
     - name: Convert TRX to JUnit XML
       run: |
