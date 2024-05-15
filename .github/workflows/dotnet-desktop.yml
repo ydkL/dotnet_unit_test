@@ -79,10 +79,11 @@ jobs:
     - name: Execute unit tests
       run: dotnet test $env:Test_Project_Path --logger "trx;LogFileName=testResults.trx"
 
-    - name: Convert test result to JUnit XML
-      run: dotnet tool install --global dotnet-trx-to-junit
-    - run: dotnet trx2junit $env:Test_Dir/testResults.trx --output $env:Test_Dir/testResults.xml
-
+    - name: Convert TRX to JUnit XML
+      run: |
+        dotnet tool install --global trx2junit
+        trx2junit $env:Test_Dir/testResults.trx $env:Test_Dir/testResults.xml
+        
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
       with:
