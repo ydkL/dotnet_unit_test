@@ -22,7 +22,7 @@ jobs:
         run: dotnet test WeatherApi.Tests/WeatherApi.Tests.csproj
 
       - name: Start WeatherAPI
-        run: dotnet run --project WeatherApi/WeatherApi.csproj --urls=https://localhost:7147 &
+        run: dotnet run --project WeatherApi/WeatherApi.csproj --urls=http://localhost:7147 &
 
       # Add a step to checkout the Postman Collection from another repository
       - name: Checkout Postman Collection
