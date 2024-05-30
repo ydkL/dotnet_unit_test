@@ -1,0 +1,43 @@
+name: Build, Test, and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_test_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      # Build your .NET application
+      - name: Build WeatherAPI
+        run: dotnet build WeatherApi/WeatherApi.csproj
+
+      # Run unit tests
+      - name: Run Unit Tests
+        run: dotnet test WeatherApi.Tests/WeatherApi.Tests.csproj
+
+      - name: Start WeatherAPI
+        run: dotnet run --project WeatherApi/WeatherApi.csproj --urls=http://localhost:7147 &
+
+      # Add a step to checkout the Postman Collection from another repository
+      - name: Checkout Postman Collection
+        uses: actions/checkout@v2
+        with:
+          repository: ydkL/postmanCIPractice
+          path: postman_collections
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      # Run Postman Tests against the running WeatherAPI
+      - name: Run Postman Tests
+        run: newman run postman_collections/postman_collection.json
+
+      # Stop WeatherAPI app after testing
+      - name: Stop WeatherAPI
+        run: kill $(lsof -t -i:7147) || echo "WeatherAPI is not running"
